@@ -1,24 +1,20 @@
 ﻿Console.OutputEncoding = System.Text.Encoding.Default;
-Console.WriteLine("Welcome to \"Find my rover\".");
+
 CalculateAndPrintCoordinates();
 
 string AskUserForInput()
 {
+    string input;
     bool inputIsValid = true;
 
     do
     {
-        if (!inputIsValid) { Console.WriteLine("Invalid Input. 😭 Please try again."); }
+        if (!inputIsValid) { Console.WriteLine("Invalid Input. 😭  Please try again."); }
         Console.WriteLine("Where did the rover go? 🤖");
-        string input = Console.ReadLine()!.Replace(" ", "");
+        input = Console.ReadLine()!.Replace(" ", "");
 
         if (input == "") { inputIsValid = false; }
-        else if ((input.Contains('<') || input.Contains('>') || input.Contains('V') || input.Contains('^')) && (input.Contains('0') || input.Contains('1') || input.Contains('2') || input.Contains('3') || input.Contains('4') || input.Contains('5') || input.Contains('6') || input.Contains('7') || input.Contains('8') || input.Contains('9')))
-        {
-            inputIsValid = true;
-            return input;
-        }
-        else if ((input.Contains('<') || input.Contains('>') || input.Contains('V') || input.Contains('^')) && !(input.Contains('0') || input.Contains('1') || input.Contains('2') || input.Contains('3') || input.Contains('4') || input.Contains('5') || input.Contains('6') || input.Contains('7') || input.Contains('8') || input.Contains('9')))
+        else if (input.Substring(0, 1) is "0" or "1" or "2" or "3" or "4" or "5" or "6" or "7" or "8" or "9")
         {
             inputIsValid = false;
         }
@@ -26,29 +22,49 @@ string AskUserForInput()
         {
             inputIsValid = false;
         }
+        else if ((input.Contains('<') || input.Contains('>') || input.Contains('V') || input.Contains('^')) && !(input.Contains('0') || input.Contains('1') || input.Contains('2') || input.Contains('3') || input.Contains('4') || input.Contains('5') || input.Contains('6') || input.Contains('7') || input.Contains('8') || input.Contains('9')))
+        {
+            inputIsValid = true;
+        }
+        else if ((input.Contains('<') || input.Contains('>') || input.Contains('V') || input.Contains('^')) && (input.Contains('0') || input.Contains('1') || input.Contains('2') || input.Contains('3') || input.Contains('4') || input.Contains('5') || input.Contains('6') || input.Contains('7') || input.Contains('8') || input.Contains('9')))
+        {
+            inputIsValid = true;
+        }
+        else
+        {
+            inputIsValid = false;
+        }
 
     } while (!inputIsValid);
-    return "";
+    return input;
 }
 
-// string CreateSubstring(string input)
-// {
-//     int indexOfChar = 0;
-//     char firstCharacter = input[0];
+string CreateSubstring(string input)
+{
+    int indexOfChar = 0;
+    char firstCharacter = input[0];
 
-//     if (input.StartsWith(firstCharacter))
-//     {
-//         for (int i = 0; i < input.Length; i++)
-//         {
-//             if (input[i] == firstCharacter)
-//             {
-//                 indexOfChar++;
-//             }
-//             else { i = input.Length; }
-//         }
-//     }
-//     return input.Substring(0, indexOfChar);
-// }
+    if (input.StartsWith(firstCharacter))
+    {
+        for (int i = 0; i < input.Length; i++)
+        {
+            if (input[i] == firstCharacter)
+            {
+                indexOfChar++;
+            }
+            else { i = input.Length; }
+        }
+    }
+    if (input.Length > indexOfChar)
+    {
+        if (int.TryParse(input.Substring(indexOfChar, 1), out _))
+        {
+            return input.Substring(0, indexOfChar - 1);
+        }
+        else { return input.Substring(0, indexOfChar); }
+    }
+    else { return input.Substring(0, indexOfChar); }
+}
 
 void CalculateAndPrintCoordinates()
 {
@@ -59,9 +75,26 @@ void CalculateAndPrintCoordinates()
 
     while (input != "")
     {
-        int movement = int.Parse(input[1].ToString());
-        char direction = input[0];
+        int movement = 0;
+        char direction;
+        var IsNumeric = false;
+        if (input.Length > 1)
+        {
+            IsNumeric = int.TryParse(input.Substring(1, 1), out movement);
+        }
 
+        if (IsNumeric == true)
+        {
+            direction = input[0];
+            input = input.Substring(2);
+        }
+        else
+        {
+            string substring = CreateSubstring(input);
+            direction = substring[0];
+            input = input.Substring(substring.Length);
+            movement = substring.Length;
+        }
         switch (direction)
         {
             case '^':
@@ -80,7 +113,6 @@ void CalculateAndPrintCoordinates()
                 west += movement;
                 break;
         }
-        input = input.Substring(2);
     }
 
     Console.Write("The rover is ");
