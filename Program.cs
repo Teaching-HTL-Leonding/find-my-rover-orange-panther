@@ -1,39 +1,54 @@
 ﻿Console.OutputEncoding = System.Text.Encoding.Default;
+Console.WriteLine("Welcome to \"Find my rover\".");
 CalculateAndPrintCoordinates();
 
 string AskUserForInput()
 {
-    string input = "<";
+    bool inputIsValid = true;
+
     do
     {
-        if (!input.Contains('<') && !input.Contains('>') && !input.Contains('V') && !input.Contains('^'))
-        {
-            Console.WriteLine("Invalid Input. 😭 Please try again.");
-        }
+        if (!inputIsValid) { Console.WriteLine("Invalid Input. 😭 Please try again."); }
         Console.WriteLine("Where did the rover go? 🤖");
-        input = Console.ReadLine()!;
-    } while (input == "" || !input.Contains('<') && !input.Contains('>') && !input.Contains('V') && !input.Contains('^'));
-    return input;
-}
+        string input = Console.ReadLine()!.Replace(" ", "");
 
-string CreateSubstring(string input)
-{
-    int indexOfChar = 0;
-    char firstCharacter = input[0];
-
-    if (input.StartsWith(firstCharacter))
-    {
-        for (int i = 0; i < input.Length; i++)
+        if (input == "") { inputIsValid = false; }
+        else if ((input.Contains('<') || input.Contains('>') || input.Contains('V') || input.Contains('^')) && (input.Contains('0') || input.Contains('1') || input.Contains('2') || input.Contains('3') || input.Contains('4') || input.Contains('5') || input.Contains('6') || input.Contains('7') || input.Contains('8') || input.Contains('9')))
         {
-            if (input[i] == firstCharacter)
-            {
-                indexOfChar++;
-            }
-            else { i = input.Length; }
+            inputIsValid = true;
+            return input;
         }
-    }
-    return input.Substring(0, indexOfChar);
+        else if ((input.Contains('<') || input.Contains('>') || input.Contains('V') || input.Contains('^')) && !(input.Contains('0') || input.Contains('1') || input.Contains('2') || input.Contains('3') || input.Contains('4') || input.Contains('5') || input.Contains('6') || input.Contains('7') || input.Contains('8') || input.Contains('9')))
+        {
+            inputIsValid = false;
+        }
+        else if (!(input.Contains('<') || input.Contains('>') || input.Contains('V') || input.Contains('^')) && (input.Contains('0') || input.Contains('1') || input.Contains('2') || input.Contains('3') || input.Contains('4') || input.Contains('5') || input.Contains('6') || input.Contains('7') || input.Contains('8') || input.Contains('9')))
+        {
+            inputIsValid = false;
+        }
+
+    } while (!inputIsValid);
+    return "";
 }
+
+// string CreateSubstring(string input)
+// {
+//     int indexOfChar = 0;
+//     char firstCharacter = input[0];
+
+//     if (input.StartsWith(firstCharacter))
+//     {
+//         for (int i = 0; i < input.Length; i++)
+//         {
+//             if (input[i] == firstCharacter)
+//             {
+//                 indexOfChar++;
+//             }
+//             else { i = input.Length; }
+//         }
+//     }
+//     return input.Substring(0, indexOfChar);
+// }
 
 void CalculateAndPrintCoordinates()
 {
@@ -44,28 +59,28 @@ void CalculateAndPrintCoordinates()
 
     while (input != "")
     {
-        string substring = CreateSubstring(input);
-        char Character = substring[0];
+        int movement = int.Parse(input[1].ToString());
+        char direction = input[0];
 
-        switch (Character)
+        switch (direction)
         {
             case '^':
-                north += substring.Length;
+                north += movement;
                 break;
 
             case '>':
-                east += substring.Length;
+                east += movement;
                 break;
 
             case 'V':
-                south += substring.Length;
+                south += movement;
                 break;
 
             case '<':
-                west += substring.Length;
+                west += movement;
                 break;
         }
-        input = input.Substring(substring.Length);
+        input = input.Substring(2);
     }
 
     Console.Write("The rover is ");
@@ -98,4 +113,3 @@ void CalculateAndPrintCoordinates()
     if (vertical != 0) { Console.Write($"{vertical}m to the {verticalDirection} "); }
 
 }
-
